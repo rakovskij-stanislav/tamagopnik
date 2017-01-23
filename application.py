@@ -59,14 +59,15 @@ def send_message(mes):
     player.recovery = False
     player.turns += 1
     player.last_activity = time.time()
-    print("extra."+player.last_motion[0])
+    #print("extra."+player.last_motion[0])
     local_room = eval("extra."+player.last_motion[0]+'()', {"player":player, "extra":extra}) #получаем информацию о комнате
     dialog = eval('local_room.' + player.last_motion[1])
     pos = player.last_motion[2]
     message = str(mes.text)
-    print('Info :', local_room, dialog, pos, mes)
-    print("Info2 :", str(type(dialog[pos])))
-    print("Info3 :", str(dialog[pos]))
+    #print('Info :', local_room, dialog, pos, mes)
+    #print("Info2 :", str(type(dialog[pos])))
+    #print("Info3 :", str(dialog[pos]))
+    print('Info :', mes.chat.id, mes.text)
     if str(type(dialog[pos])) == "<class 'str'>": #для обычных текстов
         player.last_motion[2]+=1
         #player_base.base[mes.chat.id] = player
