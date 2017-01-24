@@ -113,7 +113,8 @@ class CarLobbyRoom(room):
     questend1 = ['Я предлагаю открытому сообществу создать свой сюжет про нелегкую жизнь четких пацанов) Собственно, все подробности на гитхабе',
               'https://github.com/rakovskij-stanislav/tamagopnik',
               "Жду тебя в комментариях на пикабу и в репозитории проекта!",
-              ["end", "*Начать демку заново*"]]
+                 ["choose", {"Хммм, чётко!": "questend2"}]]
+    questend2 = [["end", "*Начать демку заново*"]]
     pass
 
 class teststartroom(room):

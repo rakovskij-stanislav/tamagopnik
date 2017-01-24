@@ -10,12 +10,38 @@ import time
 
 __author__ = "Rakovskij Stanislav"
 __ver__    = "0.1"
+admin_id = 287004218
 
 ### импортируем базу данных игроков
 player_base = db.db()
 
 ### инициализация бота
 bot = telebot.TeleBot(config.telebot[0])
+
+@bot.message_handler(commands=['admin'])
+def admin_panel(mes):
+    if mes.chat.id != admin_id :
+        return ''
+    com = str(mes.text).split()
+    if len(com)>1:
+        if com[1] in ['load', 'merge','save','wipe', "online"]:
+            if com[1] == 'load':
+                player_base.load()
+            if com[1] == 'merge':
+                player_base.merge()
+            if com[1] == 'save':
+                player_base.save()
+            if com[1] == 'wipe':
+                player_base.wipe()
+            if com[1] == "online":
+                i = 0
+                t = time.time()
+                for q in player_base.base.keys():
+                    if t - player_base.base[q].last_activity < 60*5:
+                        i+=1
+                bot.send_message(mes.chat.id, "Online users : "+str(i))
+
+
 
 # действия, которые надо применить при комманде start. Она может играть роль принудительного начала новой игры.
 @bot.message_handler(commands=['start'])
@@ -50,7 +76,7 @@ def new_start(mes): #служебная комманда для быстрого
     return ''
 
 @bot.message_handler(commands=['con'])
-def new_start(mes): #продолжить игру. надо снять флаг ожидания выбора
+def new_cont(mes): #продолжить игру. надо снять флаг ожидания выбора
     if mes.chat.id not in player_base.base: #хехе, если кто-то прошмыгнул мимо /start
         send_welcome(mes)
         return ''
