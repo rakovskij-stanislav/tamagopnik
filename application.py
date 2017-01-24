@@ -20,7 +20,7 @@ bot = telebot.TeleBot(config.telebot)
 # действия, которые надо применить при комманде start. Она может играть роль принудительного начала новой игры.
 @bot.message_handler(commands=['start'])
 def send_welcome(mes):
-    print(mes)
+    #print(mes)
     if mes.chat.id in player_base.base.keys():
         #если старый игрок требует старт
         player_base.base[mes.chat.id].recovery=True
