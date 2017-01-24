@@ -193,4 +193,4 @@ def send(mes):
 
 bot_thread = _thread.start_new(bot.polling, ())
 a = input("meh, it is an exit")
-###
+### Работаю в PyCharm, поэтому нужна точка остановки
