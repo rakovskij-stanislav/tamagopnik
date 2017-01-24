@@ -15,7 +15,7 @@ __ver__    = "0.1"
 player_base = db.db()
 
 ### инициализация бота
-bot = telebot.TeleBot(config.telebot)
+bot = telebot.TeleBot(config.telebot[0])
 
 # действия, которые надо применить при комманде start. Она может играть роль принудительного начала новой игры.
 @bot.message_handler(commands=['start'])
@@ -67,11 +67,12 @@ def send_message(mes):
     #print('Info :', local_room, dialog, pos, mes)
     #print("Info2 :", str(type(dialog[pos])))
     #print("Info3 :", str(dialog[pos]))
-    print('Info :', mes.chat.id, mes.text)
+    #print('Info :', mes.chat.id, mes.text)
     if str(type(dialog[pos])) == "<class 'str'>": #для обычных текстов
         player.last_motion[2]+=1
         #player_base.base[mes.chat.id] = player
-        sender(mes, text=dialog[pos])
+        print('Info0 :', mes.chat.id, 'Прошлое сообщение человека :', mes.text, '\n   Отвечаю ему', dialog[pos])
+        bot.send_message(mes.chat.id, dialog[pos], parse_mode="html")
         send_message(mes)
         return ''
     else:
@@ -95,9 +96,8 @@ def send_message(mes):
                 markup = types.ReplyKeyboardMarkup()
                 for i in vars:
                     markup.row(types.KeyboardButton(i))
-                #print("GTXFNFTV ^ твой выбор")
+                print('Info1 :', mes.chat.id, "return a choose", str(motion[1]))
                 bot.send_message(mes.chat.id, text, reply_markup=markup, parse_mode="html")
-                #print("gs,jh отправлен")
                 return ''
 
         elif motion[0] == "goto":
@@ -110,6 +110,7 @@ def send_message(mes):
 
         elif motion[0] == "end":
             player_base.base.pop(mes.chat.id)
+            print('Info2 :', mes.chat.id, mes.text)
             bot.send_message(mes.chat.id, motion[1], parse_mode="html")
             return ''
 
@@ -118,21 +119,25 @@ def send_message(mes):
             player.last_motion[2]+=1
             player_base.base[mes.chat.id] = player
             if len(motion)==3:
+                print('Info3 :', mes.chat.id, mes.text)
                 bot.send_message(mes.chat.id, motion[2], parse_mode="html")
             send_message(mes)
             return ''
 
         elif motion[0] == "drop":
             if motion[1] not in player.inventory:
+                print('Info4 :', mes.chat.id, mes.text)
                 bot.send_message(mes.chat.id, "Обнаружена нецелостность квеста. Сообщите об этом автору.\n Техническая информация :"+str(local_room)+'/'+str(dialog)+'/'+str(pos))
-                print('ERROR 9',local_room, dialog, pos, mes)
+                print('ERROR 9', mes.chat.id,local_room, dialog, pos, mes)
                 return ''
             del player.inventory[player.inventory.index(motion[1])]
             player.last_motion[2]+=1
             player_base.base[mes.chat.id] = player
             if len(motion)==3:
+                print('Info5 :', mes.chat.id, mes.text)
                 bot.send_message(mes.chat.id, motion[2], parse_mode="html")
             else:
+                print('Info6 :', mes.chat.id, mes.text)
                 bot.send_message(mes.chat.id, "#_#", parse_mode="html")
             send_message(mes)
             return ''
@@ -158,14 +163,14 @@ def send_message(mes):
             ans = motion[1]
             ans = eval('"'+ans+'".format('+motion[2]+')')
             player.last_motion[2]+=1
+            print('Info7 :', mes.chat.id, mes.text)
             bot.send_message(mes.chat.id, ans, parse_mode="html")
             send_message(mes)
             return ""
 
         bot.send_message(mes.chat.id, 'Еще надо подумать', parse_mode="html")
 
-def sender(mes, text):
-    bot.send_message(mes.chat.id, text, parse_mode="html")
+
 
 """
 @bot.message_handler(commands=['start', 'help'])
