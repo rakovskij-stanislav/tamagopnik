@@ -26,7 +26,7 @@ def send_welcome(mes):
         player_base.base[mes.chat.id].recovery=True
         markup = types.ReplyKeyboardMarkup()
         it_a = types.KeyboardButton('/new Начать новую игру')
-        it_b = types.KeyboardButton('Продолжить прошлую игру')
+        it_b = types.KeyboardButton('/con Продолжить прошлую игру')
         markup.row(it_a)
         markup.row(it_b)
         bot.send_message(mes.chat.id, "У тебя уже есть незавершенная игра, что будем делать?", reply_markup=markup)
@@ -45,6 +45,18 @@ def send_help(mes):
 def new_start(mes): #служебная комманда для быстрого удаления информации о текущем пользователе
     if mes.chat.id in player_base.base:
         player_base.base.pop(mes.chat.id)
+    print("InfoNEW :", mes.chat.id)
+    send_message(mes)
+    return ''
+
+@bot.message_handler(commands=['con'])
+def new_start(mes): #продолжить игру. надо снять флаг ожидания выбора
+    if mes.chat.id not in player_base.base: #хехе, если кто-то прошмыгнул мимо /start
+        send_welcome(mes)
+        return ''
+    print("InfoCON :", mes.chat.id)
+    player = player_base.base[mes.chat.id]
+    player.waiting_answer = False
     send_message(mes)
     return ''
 
@@ -80,13 +92,13 @@ def send_message(mes):
         motion = dialog[pos]
         if motion[0] == "choose":
             motto = motion[1]
-            vars = motto.keys()
+            varss = motto.keys()
             text = '%Твой выбор:%'
-            if message in vars: #если игрок прислал ответ
+            if message in varss: #если игрок прислал ответ
                 #sender(mes, "ti molode4", markup)
                 player.last_motion[2]=0
                 player.last_motion[1] = motto[message]
-                player_base.base[mes.chat.id] = player
+                player.waiting_answer = False
                 send_message(mes)
                 return ''
             else: #если мы лишь перешли на этот блок или надо повторить отправку
@@ -94,10 +106,13 @@ def send_message(mes):
                 if len(motion)==3:
                     text=motion[2]
                 markup = types.ReplyKeyboardMarkup()
-                for i in vars:
+                for i in varss:
                     markup.row(types.KeyboardButton(i))
                 print('Info1 :', mes.chat.id, "return a choose", str(motion[1]))
-                bot.send_message(mes.chat.id, text, reply_markup=markup, parse_mode="html")
+                if player.waiting_answer == False:
+                    player.waiting_answer = True
+                    bot.send_message(mes.chat.id, text, reply_markup=markup, parse_mode="html")
+
                 return ''
 
         elif motion[0] == "goto":
@@ -192,5 +207,6 @@ def send(mes):
 """
 
 bot_thread = _thread.start_new(bot.polling, ())
-a = input("meh, it is an exit")
+a = input("Enter exit if it is IDLE")
 ### Работаю в PyCharm, поэтому нужна точка остановки
+
