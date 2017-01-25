@@ -209,6 +209,15 @@ def send_message(mes):
             send_message(mes)
             return ""
 
+        elif motion[0] == "reset_but":
+            player.last_motion[2]+=1
+            print('Info8 :', mes.chat.id, mes.text)
+            markup = types.ReplyKeyboardHide(selective=False)
+            bot.send_message(mes.chat.id, motion[1], parse_mode="html", reply_markup=markup)
+            send_message(mes)
+            return ''
+
+
         bot.send_message(mes.chat.id, 'Еще надо подумать', parse_mode="html")
 
 
