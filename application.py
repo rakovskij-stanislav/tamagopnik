@@ -260,7 +260,7 @@ def metrika():
             t = time.time()
             i = 0
             for player in player_base.base.keys():
-                if player_base.base[player].last_activity - t < 60 * 5:
+                if t - player_base.base[player].last_activity < 60 * 5:
                     i += 1
             f.write(str(datetime.now())[:-7] + ';' + str(i) + '\n')
         print("#Logged")
